@@ -9,14 +9,21 @@ A multithreaded Redis-inspired in-memory key-value database server built in mode
 ![Multithreading](https://img.shields.io/badge/Multithreading-std::thread-red.svg)
 ![Thread Safety](https://img.shields.io/badge/Thread--Safe-std::mutex-success.svg)
 ![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
+![CI](https://github.com/Shravanii-03/redis-clone/actions/workflows/build.yml/badge.svg)
 
 ## Overview
 
-MiniRedis is a lightweight Redis-inspired in-memory key-value database server developed in modern C++17 as a systems programming project. The project demonstrates the implementation of core database concepts including TCP networking, concurrent client handling, thread-safe data storage, persistence, authentication, and command parsing.
+MiniRedis is a lightweight Redis-inspired in-memory key-value database developed in modern C++17 as a systems programming project. The project demonstrates the implementation of core database concepts including TCP networking, concurrent client handling, thread-safe data storage, persistence, authentication, and command parsing.
 
 Unlike a simple key-value store, MiniRedis was designed with modularity and extensibility in mind. The server separates networking, command parsing, command execution, storage management, persistence, benchmarking, and testing into independent components, making the architecture easier to maintain and extend.
 
 The project focuses on understanding how an in-memory database works internally rather than replicating every Redis feature. It showcases practical software engineering concepts such as multithreading, synchronization, socket programming, unit testing, and build automation using CMake.
+
+## Build Status
+
+| Platform | Status |
+|----------|--------|
+| Windows | Passing |
 
 ## Features
 
@@ -30,7 +37,7 @@ The project focuses on understanding how an in-memory database works internally 
 ### Database
 
 - In-memory key-value storage
-- Thread-safe operations using std::mutex
+- Thread-safe operations using std::mutex and std::lock_guard
 - Constant-time key lookup using std::unordered_map
 - Key deletion
 - Key enumeration
@@ -45,7 +52,7 @@ The project focuses on understanding how an in-memory database works internally 
 - INFO
 - AUTH
 - SAVE
-- LOAD
+
 
 ### Persistence
 
@@ -155,24 +162,23 @@ redis-clone/
 ```
 ## Supported Commands
 
-| Command | Description | Example |
-|----------|-------------|---------|
-| PING | Test server connectivity | `PING` |
-| SET | Store a key-value pair | `SET name Shravani` |
-| GET | Retrieve a value | `GET name` |
-| DEL | Delete a key | `DEL name` |
-| KEYS | List all keys | `KEYS` |
-| INFO | Display server statistics | `INFO` |
-| AUTH | Authenticate a client | `AUTH password` |
-| SAVE | Persist database to disk | `SAVE` |
-| LOAD | Load persisted database | Automatically on startup |
+| Command | Description | 
+|----------|-------------|
+| PING | Test server connectivity | 
+| SET | Store a key-value pair |
+| GET | Retrieve a value | 
+| DEL | Delete a key | 
+| KEYS | List all keys |
+| INFO | Display server statistics | 
+| AUTH | Authenticate a client | 
+| SAVE | Persist database to disk |
 
 ## Building the Project
 
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/redis-clone.git
+git clone https://github.com/Shravanii-03/redis-clone.git
 cd redis-clone
 ```
 
@@ -181,6 +187,7 @@ cd redis-clone
 ```bash
 cmake -B build
 ```
+Note: MiniRedis currently targets Windows and uses the WinSock2 networking API. Build and run the project using Visual Studio or MSVC-compatible toolchains.
 
 ### Build
 
@@ -190,45 +197,16 @@ cmake --build build
 
 ## Running the Server
 
-```bash
-./build/MiniRedis
+```powershell
+.\build\Release\MiniRedis.exe
 ```
 
-Expected output:
-
-```text
-====================================
-         MiniRedis Server
-====================================
-
-Listening on port 6379...
-Waiting for clients...
-```
 ## Running the Client
 
-```bash
-./build/MiniRedisClient
+```powershell
+.\build\Release\MiniRedisClient.exe
 ```
 
-Example session:
-
-```text
-MiniRedis> PING
-PONG
-
-MiniRedis> SET name Shravani
-OK
-
-MiniRedis> GET name
-Shravani
-
-MiniRedis> INFO
-
-MiniRedis Server
-----------------
-Keys: 1
-Connected Clients: 1
-```
 
 ## Running Unit Tests
 
@@ -240,21 +218,15 @@ Run:
 ctest --test-dir build
 ```
 
-Example output:
-
-```text
-100% tests passed, 11 tests passed out of 11
-```
 ## Benchmark
 
 The project includes a benchmarking utility for measuring database performance.
 
 Run:
 
-```bash
-./build/Benchmark
+```powershell
+.\build\Release\Benchmark.exe
 ```
-
 
 ## Technologies Used
 
@@ -267,7 +239,7 @@ Run:
 | Synchronization | std::mutex |
 | Data Structure | std::unordered_map |
 | Testing | GoogleTest |
-| Benchmarking | C++ Chrono Library |
+| Benchmarking | std::chrono |
 | Version Control | Git |
 | Platform | Windows |
 
@@ -296,13 +268,11 @@ Potential enhancements include:
 - Full RESP protocol compatibility
 - Publish/Subscribe messaging
 - Transaction support (MULTI / EXEC)
-- Cross-platform socket implementation
-- Docker support
+- Linux cross-platform socket implementation
 - Configuration file support
 - REST API for monitoring
 - Memory optimization
 - Advanced benchmarking
-- GitHub Actions CI/CD
 
 ## License
 
