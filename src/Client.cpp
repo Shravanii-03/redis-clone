@@ -1,5 +1,6 @@
 #include <iostream>
 #include <winsock2.h>
+#include <string>
 
 int main()
 {
