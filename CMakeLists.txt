@@ -1,11 +1,21 @@
 cmake_minimum_required(VERSION 3.15)
 
 project(MiniRedis)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 enable_testing()
 
-find_package(GTest REQUIRED)
+include(FetchContent)
 
-set(CMAKE_CXX_STANDARD 17)
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.17.0.zip
+)
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+FetchContent_MakeAvailable(googletest)
+
 
 include_directories(include)
 
@@ -55,4 +65,3 @@ add_executable(Benchmark
 target_link_libraries(MiniRedis ws2_32)
 target_link_libraries(MiniRedisClient ws2_32)
 
-target_link_libraries(MiniRedis ws2_32)
