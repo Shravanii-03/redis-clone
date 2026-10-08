@@ -1,19 +1,54 @@
 #include "CommandExecutor.h"
 #include "Persistence.h"
 
+#include <cctype>
+#include <utility>
+
 CommandExecutor::CommandExecutor(
     DataStore& store,
-    ServerStats& stats)
+    ServerStats& stats,
+    ClientSession* session,
+    std::string password)
     : store_(store),
-      stats_(stats)
+      stats_(stats),
+      session_(session),
+      password_(std::move(password))
 {
 }
 
 std::string CommandExecutor::execute(
-    const std::vector<std::string>& tokens)
+    const std::vector<std::string>& rawTokens)
 {
-    if(tokens.empty())
+    if(rawTokens.empty())
         return "ERR Empty command";
+
+    // Command names are case-insensitive (like Redis); arguments are not.
+    std::vector<std::string> tokens = rawTokens;
+    for (char& c : tokens[0])
+        c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+
+    // ---------------- Authentication ----------------
+    const bool authRequired = !password_.empty() && session_ != nullptr;
+
+    if (tokens[0] == "AUTH")
+    {
+        if (!authRequired)
+            return "ERR Client sent AUTH, but no password is set";
+
+        if (tokens.size() != 2)
+            return "ERR Usage: AUTH password";
+
+        if (tokens[1] == password_)
+        {
+            session_->authenticate();
+            return "OK";
+        }
+
+        return "ERR invalid password";
+    }
+
+    if (authRequired && !session_->isAuthenticated())
+        return "NOAUTH Authentication required";
 
     if(tokens[0] == "PING")
         return "PONG";

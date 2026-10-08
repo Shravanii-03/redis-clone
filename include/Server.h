@@ -2,19 +2,22 @@
 
 #include <winsock2.h>
 
+#include <string>
+
 #include "DataStore.h"
 #include "ServerStats.h"
 
 class Server
 {
 public:
-    explicit Server(int port);
+    explicit Server(int port, std::string password = "");
 
     bool start();
 
 private:
     // Configuration
     int port_;
+    std::string password_;   // empty = authentication disabled
 
     // Networking
     SOCKET serverSocket_;

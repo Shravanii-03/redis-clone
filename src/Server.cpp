@@ -10,9 +10,11 @@
 #include "RESPParser.h"
 #include "RESPEncoder.h"
 #include "ClientSession.h"
+#include <utility>
 
-Server::Server(int port)
-    : port_(port)
+Server::Server(int port, std::string password)
+    : port_(port),
+      password_(std::move(password))
 {
 }
 bool Server::initializeWinsock()
@@ -184,7 +186,9 @@ void Server::handleClient(SOCKET clientSocket)
 
     CommandExecutor executor(
         store_,
-        stats_);
+        stats_,
+        &session,
+        password_);
 
     constexpr int BUFFER_SIZE = 1024;
     while (true)
@@ -241,6 +245,13 @@ char buffer[BUFFER_SIZE]{};
                       {
                           response =
                               RESPEncoder::nullBulkString();
+                      }
+                      else if (response.rfind("ERR", 0) == 0 ||
+                               response.rfind("NOAUTH", 0) == 0)
+                      {
+                          // Errors use the RESP error type ("-...")
+                          response =
+                              RESPEncoder::error(response);
                       }
                       else
                       {

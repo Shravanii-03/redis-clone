@@ -45,6 +45,7 @@ add_executable(MiniRedisTests
     src/CommandExecutor.cpp
     src/ServerStats.cpp
     src/Persistence.cpp
+    src/ClientSession.cpp
 )
 
 target_link_libraries(
